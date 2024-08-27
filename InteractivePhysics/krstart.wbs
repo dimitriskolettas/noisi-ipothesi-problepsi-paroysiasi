@@ -1,0 +1,48 @@
+Option Compare Text ' This makes string comparisons case-insensitive.
+
+Sub Main()
+	dim wmdirectory as string, sep as string
+	dim currentdirectory as string
+	currentdirectory = CurDir$
+	if basic.os = ebWin16 or basic.os = ebWin32 then
+	 	wmdirectory = wm.StartupDirectory
+	else
+		wmdirectory = CurDir$
+	end if
+	ChDrive(wmdirectory)
+	ChDir(wmdirectory)
+	sep = Basic.PathSeparator$		' Stores the appropriate path separator for this platform
+	' Define all the files with a wbs extension inside the scripts directory/folder
+	If (Dir$("SCRIPTS", ebDirectory) = "SCRIPTS") THEN	' The directory/folder SCRIPTS exists
+		Dim f(20) as string, fullname as string, scriptdir as string
+		scriptdir = wmdirectory + sep + "SCRIPTS" 
+		ChDir(scriptdir)					'Set to the SCRIPT directory
+		f(1) = Dir$("*.wbs")				' Find the first file with a .wbs extension
+		i% = 1
+		While (f(i) <> "") And (i < 20)		'Define the first 20 scripts found
+			fullname = scriptdir + sep + f(i)
+			WM.InsertMenuItem i, f(i), fullname
+			i = i+1
+			f(i) = Dir$						' Get next file with a .wbs extension
+		Wend
+	End If
+	' Define the "Official KR" scripts
+	' Demo scripts
+	Dim krscripts as string
+	krscripts = scriptdir + sep + "KRDEMOS"
+	If (Dir$("KRDEMOS",ebDirectory) = "KRDEMOS") then	' The directory/folder KRDEMOS exists
+		WM.InsertMenuItem 1,"Create Constraint", krscripts + sep + "bldcons.wbs"
+		WM.InsertMenuItem 2,"Document Model", krscripts + sep + "docinfo.wbs"
+		WM.InsertMenuItem 3,"Zoom to Extent", krscripts + sep + "krzoom.wbs"
+		WM.InsertMenuItem 4,"Measure Between Points", krscripts + sep + "measure.wbs"
+		WM.InsertMenuItem 5,"Flip Polygon", krscripts + sep + "flipoly.wbs"
+	end If		
+ 	' Run the User startup file
+	dim userstartup as string
+ 	userstartup = wmdirectory + sep + "startup.wbs"
+	If FileExists(userstartup) then
+ 		wm.RunScript userstartup
+	end If
+	ChDir(currentdirectory)
+	ChDrive(currentdirectory)
+End Sub

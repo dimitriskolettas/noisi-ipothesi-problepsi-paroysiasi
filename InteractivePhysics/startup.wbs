@@ -1,0 +1,7 @@
+Sub Main()
+ 	' This startup file is run when Interactive Physics first starts up
+	' You can put in this files any WMB commands that you want
+	' executed at startup.
+	' The working directory will be the directory where the 
+	' Interactive Physics executable resides 
+End Sub
